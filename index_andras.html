@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quizdom – Neonos Kvíz</title>
+  <style>
+   body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+  overflow: hidden;
+}
+/* Andras */
+/* --- MENÜ KÉPERNYŐ --- */
+#menu-screen {
+  background: url("./Quizdom/images/menu-bg.png") center/cover no-repeat;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- QUIZDOM cím teljes eltávolítása --- */
+#menu-screen h1 {
+  display: none;
+}
+
+/* --- Legördülők és gombok méretezése --- */
+label {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #00e5ff;
+  text-shadow: 0 0 8px #00e5ff, 0 0 20px #00e5ff;
+  margin-right: 10px;
+}
+
+/* --- Legördülő menük (kiválasztott szöveggel együtt) --- */
+select {
+  margin: 12px;
+  padding: 16px 22px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1.4em;
+  background: rgba(255,255,255,0.9);
+  color: #000;
+  box-shadow: 0 0 12px rgba(0,229,255,0.4);
+  cursor: pointer;
+  transition: 0.2s;
+}
+select:hover {
+  box-shadow: 0 0 20px rgba(0,229,255,0.7);
+}
+
+/* --- Start gomb nagyobb, fényesebb --- */
+#start-btn {
+  background: #00e5ff;
+  color: #111;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  padding: 18px 55px;
+  font-size: 1.6em;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 0 25px #00e5ff, 0 0 50px #00e5ff;
+  margin-top: 20px;
+}
+#start-btn:hover {
+  background: #00bcd4;
+  box-shadow: 0 0 35px #00e5ff, 0 0 60px #00e5ff;
+  transform: scale(1.08);
+}
+
+
+/* --- KVÍZ KÉPERNYŐ --- */
+#quiz-screen {
+  background: url("./Quizdom/images/quiz-bg.png") center/cover no-repeat;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.8s ease-in;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.question-box {
+  width: 100%;
+  max-width: 1100px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* --- KÉRDÉS --- */
+.question {
+  font-size: 2.3em;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00e5ff;
+  position: absolute;
+  top: 8.5%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 300%;
+  letter-spacing: 0.5px;
+}
+
+/* --- VÁLASZOK --- */
+.answers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 165px;
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 145%;
+  justify-items: center;
+}
+
+button.answer {
+  width: 360px;
+  height: 65px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #00e5ff;
+  color: white;
+  font-size: 1.15em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+button.answer:hover {
+  background: rgba(0, 229, 255, 0.25);
+  box-shadow: 0 0 25px #00e5ff;
+}
+
+button.correct {
+  background: #00ff88;
+  color: #000;
+}
+
+button.wrong {
+  background: #ff4f4f;
+  color: #fff;
+}
+
+/* --- NAVIGÁCIÓ + PONTSZÁM --- */
+#next-btn {
+  margin-top: 20px;
+  background: #00e5ff;
+  color: #111;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 25px;
+  font-size: 1em;
+  cursor: pointer;
+  display: none;
+}
+
+#score {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #00e5ff;
+  text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
+}
+
+.difficulty-text {
+  position: absolute;
+  bottom: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ccc;
+  font-style: italic;
+  font-size: 1em;
+}
+  </style>
+</head>
+<body>
+
+  <!-- 🔊 HANGOK BETÖLTÉSE -->
+  <audio id="click-sound" src="./Quizdom/sounds/click.mp3"></audio>
+  <audio id="correct-sound" src="./Quizdom/sounds/correct.mp3"></audio>
+  <audio id="wrong-sound" src="./Quizdom/sounds/wrong.mp3"></audio>
+
+  <!-- KEZDŐ MENÜ -->
+  <div id="menu-screen">
+    <h1>💡 QUIZDOM</h1>
+    <div>
+      <label><strong>Téma:</strong></label>
+      <select id="temaValaszto">
+        <option value="magyar">Magyar történelem</option>
+        <option value="roman">Román történelem</option>
+        <option value="altalanos">Általános történelem</option>
+      </select>
+    </div>
+    <div>
+      <label><strong>Nehézség:</strong></label>
+      <select id="nehezsegValaszto">
+        <option value="osszes">Összes</option>
+        <option value="Könnyű">Könnyű</option>
+        <option value="Haladó">Haladó</option>
+        <option value="Expert">Expert</option>
+      </select>
+    </div>
+    <button id="start-btn" onclick="startGame()">▶️ Start</button>
+  </div>
+
+  <!-- KVÍZ KÉPERNYŐ -->
+  <div id="quiz-screen">
+    <div class="question-box" id="game-container">
+      <p>Betöltés...</p>
+    </div>
+    <p id="score">Pontszám: 0</p>
+  </div>
+
+  <script>
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    // 🔊 Hangok lekérése
+    const clickSound = document.getElementById('click-sound');
+    const correctSound = document.getElementById('correct-sound');
+    const wrongSound = document.getElementById('wrong-sound');
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    async function startGame() {
+      clickSound.play(); // ▶️ Hang indításkor
+      const tema = document.getElementById('temaValaszto').value;
+      const nehezseg = document.getElementById('nehezsegValaszto').value;
+      document.getElementById('menu-screen').style.display = "none";
+      document.getElementById('quiz-screen').style.display = "flex";
+
+      const container = document.getElementById('game-container');
+      container.innerHTML = "<p>Kérdések betöltése...</p>";
+      score = 0;
+      document.getElementById('score').innerText = "Pontszám: 0";
+
+      try {
+        const response = await fetch(`http://localhost:5000/questions/${tema}`);
+        let allQuestions = await response.json();
+        if (nehezseg !== "osszes") {
+          allQuestions = allQuestions.filter(q => q.nehezseg === nehezseg);
+        }
+        if (allQuestions.length === 0) {
+          container.innerHTML = "<p>⚠️ Nincs elérhető kérdés ebben a témában.</p>";
+          return;
+        }
+        questions = allQuestions;
+        shuffleArray(questions);
+        currentIndex = 0;
+        showQuestion();
+      } catch (err) {
+        container.innerHTML = "<p>❌ Hiba a kérdések betöltésekor.</p>";
+      }
+    }
+
+    function showQuestion() {
+      const container = document.getElementById('game-container');
+      const q = questions[currentIndex];
+      const answers = [...q.valaszok];
+      shuffleArray(answers);
+
+      container.innerHTML = `
+        <div class="question">${q.kerdes}</div>
+        <div class="answers">
+          ${answers.map(v => `
+            <button class="answer" onclick="checkAnswer(this, ${v.helyes}, ${q.pontszam})">${v.szoveg}</button>
+          `).join('')}
+        </div>
+        <p class="difficulty-text">Nehézség: ${q.nehezseg} (${q.pontszam} pont)</p>
+      `;
+    }
+
+    function checkAnswer(button, helyes, pontszam) {
+      const buttons = document.querySelectorAll('.answer');
+      buttons.forEach(b => b.disabled = true);
+
+      if (helyes) {
+        correctSound.play(); // ✅ Jó válasz hang
+        button.classList.add('correct');
+        score += pontszam;
+      } else {
+        wrongSound.play();   // ❌ Rossz válasz hang
+        button.classList.add('wrong');
+        const correctButton = Array.from(buttons).find(b => b.outerHTML.includes("true"));
+        if (correctButton) correctButton.classList.add('correct');
+      }
+
+      document.getElementById('score').innerText = `Pontszám: ${score}`;
+      setTimeout(nextQuestion, 1200);
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        showQuestion();
+      } else {
+        endGame();
+      }
+    }
+
+    function endGame() {
+      const container = document.getElementById('game-container');
+      container.innerHTML = `
+        <h2>🎉 Vége a kvíznek!</h2>
+        <p>Elért pontszámod: <strong>${score}</strong> / ${questions.reduce((s,q)=>s+q.pontszam,0)}</p>
+        <button onclick="location.reload()">🔁 Vissza a menübe</button>
+      `;
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
