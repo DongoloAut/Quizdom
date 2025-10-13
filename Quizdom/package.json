@@ -1,0 +1,26 @@
+{
+  "name": "quizdom",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "vite": "^7.1.7"
+  },
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "mongoose": "^8.19.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+
