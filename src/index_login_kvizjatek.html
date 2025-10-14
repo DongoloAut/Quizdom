@@ -1,0 +1,453 @@
+<<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quizdom – Login + Kvíz</title>
+
+  <!-- Login stílus -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+
+   /* --- LOGIN képernyő --- */
+#login-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+
+  background: url("/images/login-bg.png") center/cover no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Világosabb, hogy a logó jól látszódjon */
+  backdrop-filter: brightness(1.05) saturate(1.2);
+}
+
+/* --- Login panel (wrapper) --- */
+.wrapper {
+  background: rgba(0, 0, 0, 0.45); /* áttetsző fekete, hogy a háttér logó látszódjon */
+  padding: 40px 50px;
+  border-radius: 18px;
+  box-shadow:
+    0 0 25px #00e5ff,
+    0 0 60px rgba(0, 229, 255, 0.3);
+  text-align: center;
+  width: 360px;
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+/* --- Login cím --- */
+.wrapper h1 {
+  margin-bottom: 25px;
+  color: #00e5ff;
+  text-shadow: 0 0 10px #00e5ff, 0 0 25px #00bcd4;
+  font-size: 2em;
+}
+
+/* --- Input mezők --- */
+.input-box {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  border: 2px solid rgba(0, 229, 255, 0.6);
+  border-radius: 10px;
+  outline: none;
+  font-size: 1em;
+  color: #00e5ff;
+  background: rgba(0, 0, 0, 0.4);
+  transition: 0.3s;
+}
+
+.input-box input:focus {
+  box-shadow: 0 0 15px #00e5ff;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.input-box i {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00e5ff;
+  font-size: 1.2em;
+}
+
+/* --- Gomb --- */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #00e5ff, #00bcd4);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.1em;
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
+}
+
+.btn:hover {
+  background: linear-gradient(90deg, #00bcd4, #00e5ff);
+  transform: scale(1.05);
+  box-shadow: 0 0 35px rgba(0, 229, 255, 0.7);
+}
+
+/* --- Linkek és szöveg --- */
+.remember-forgot, .register-link {
+  font-size: 0.9em;
+  margin-top: 15px;
+  color: #00e5ff;
+}
+
+.remember-forgot a,
+.register-link a {
+  color: #00bcd4;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.remember-forgot a:hover,
+.register-link a:hover {
+  color: #00e5ff;
+  text-shadow: 0 0 8px #00e5ff;
+}
+
+/* --- Jelölőnégyzet szín --- */
+.remember-forgot input[type="checkbox"] {
+  accent-color: #00e5ff;
+}
+
+
+    /* --- MENÜ képernyő --- */
+    #menu-screen {
+      background: url("/images/menu-bg.png") center/cover no-repeat;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    label {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #00e5ff;
+      text-shadow: 0 0 8px #00e5ff, 0 0 20px #00e5ff;
+      margin-right: 10px;
+    }
+
+    select {
+      margin: 12px;
+      padding: 16px 22px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.4em;
+      background: rgba(255,255,255,0.9);
+      color: #000;
+      box-shadow: 0 0 12px rgba(0,229,255,0.4);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #start-btn {
+      background: #00e5ff;
+      color: #111;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      padding: 18px 55px;
+      font-size: 1.6em;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 0 25px #00e5ff, 0 0 50px #00e5ff;
+      margin-top: 20px;
+    }
+
+    #start-btn:hover {
+      background: #00bcd4;
+      box-shadow: 0 0 35px #00e5ff, 0 0 60px #00e5ff;
+      transform: scale(1.08);
+    }
+
+    /* --- KVÍZ képernyő --- */
+    #quiz-screen {
+      background: url("/images/quiz-bg.png") center/cover no-repeat;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.8s ease-in;
+      position: relative;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .question-box {
+      width: 100%;
+      max-width: 1100px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .question {
+      font-size: 2.3em;
+      font-weight: bold;
+      text-shadow: 0 0 10px #00e5ff;
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 300%;
+      letter-spacing: 0.5px;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 165px;
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 145%;
+      justify-items: center;
+    }
+
+    button.answer {
+      width: 360px;
+      height: 65px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid #00e5ff;
+      color: white;
+      font-size: 1.15em;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    button.answer:hover {
+      background: rgba(0, 229, 255, 0.25);
+      box-shadow: 0 0 25px #00e5ff;
+    }
+
+    button.correct { background: #00ff88; color: #000; }
+    button.wrong { background: #ff4f4f; color: #fff; }
+
+    #score {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #00e5ff;
+      text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN képernyő -->
+  <div id="login-screen">
+    <div class="wrapper">
+      <form id="login-form">
+        <h1>Login</h1>
+        <div class="input-box">
+          <input type="text" id="username" placeholder="Username" required>
+          <i class="bx bx-user"></i>
+        </div>
+        <div class="input-box">
+          <input type="password" id="password" placeholder="Password" required>
+          <i class="bx bx-lock"></i>
+        </div>
+        <button type="submit" class="btn" id="login-btn">Login</button>
+        <div class="remember-forgot">
+          <label><input type="checkbox" id="remember"> Remember me</label>
+          <a href="#">Forgot password?</a>
+        </div>
+        <div class="register-link">
+          <p>Don't have an account? <a href="#">Register</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MENÜ + KVÍZ képernyő -->
+  <div id="menu-screen">
+    <h1>💡 QUIZDOM</h1>
+    <div>
+      <label><strong>Téma:</strong></label>
+      <select id="temaValaszto">
+        <option value="magyar">Magyar történelem</option>
+        <option value="roman">Román történelem</option>
+        <option value="altalanos">Általános történelem</option>
+      </select>
+    </div>
+    <div>
+      <label><strong>Nehézség:</strong></label>
+      <select id="nehezsegValaszto">
+        <option value="osszes">Összes</option>
+        <option value="Könnyű">Könnyű</option>
+        <option value="Haladó">Haladó</option>
+        <option value="Expert">Expert</option>
+      </select>
+    </div>
+    <button id="start-btn" onclick="startGame()">▶️ Start</button>
+  </div>
+
+  <div id="quiz-screen">
+    <div class="question-box" id="game-container">
+      <p>Betöltés...</p>
+    </div>
+    <p id="score">Pontszám: 0</p>
+  </div>
+
+  <!-- 🔊 Hangok -->
+  <audio id="click-sound" src="/sounds/click.mp3"></audio>
+  <audio id="correct-sound" src="/sounds/correct.mp3"></audio>
+  <audio id="wrong-sound" src="/sounds/wrong.mp3"></audio>
+
+  <script>
+    // --- LOGIN működés ---
+    const loginForm = document.getElementById("login-form");
+    const loginScreen = document.getElementById("login-screen");
+    const menuScreen = document.getElementById("menu-screen");
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      if (username) {
+        localStorage.setItem("user", username);
+        loginScreen.style.display = "none";
+        menuScreen.style.display = "flex";
+      }
+    });
+
+    // --- KVÍZ logika ---
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    const clickSound = document.getElementById('click-sound');
+    const correctSound = document.getElementById('correct-sound');
+    const wrongSound = document.getElementById('wrong-sound');
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    async function startGame() {
+      clickSound.play();
+      const tema = document.getElementById('temaValaszto').value;
+      const nehezseg = document.getElementById('nehezsegValaszto').value;
+      menuScreen.style.display = "none";
+      document.getElementById('quiz-screen').style.display = "flex";
+
+      const container = document.getElementById('game-container');
+      container.innerHTML = "<p>Kérdések betöltése...</p>";
+      score = 0;
+      document.getElementById('score').innerText = "Pontszám: 0";
+
+      try {
+        const response = await fetch(`http://localhost:5000/questions/${tema}`);
+        let allQuestions = await response.json();
+        if (nehezseg !== "osszes") {
+          allQuestions = allQuestions.filter(q => q.nehezseg === nehezseg);
+        }
+        if (allQuestions.length === 0) {
+          container.innerHTML = "<p>⚠️ Nincs elérhető kérdés ebben a témában.</p>";
+          return;
+        }
+        questions = allQuestions;
+        shuffleArray(questions);
+        currentIndex = 0;
+        showQuestion();
+      } catch (err) {
+        container.innerHTML = "<p>❌ Hiba a kérdések betöltésekor.</p>";
+      }
+    }
+
+    function showQuestion() {
+      const container = document.getElementById('game-container');
+      const q = questions[currentIndex];
+      const answers = [...q.valaszok];
+      shuffleArray(answers);
+
+      container.innerHTML = `
+        <div class="question">${q.kerdes}</div>
+        <div class="answers">
+          ${answers.map(v => `
+            <button class="answer" onclick="checkAnswer(this, ${v.helyes}, ${q.pontszam})">${v.szoveg}</button>
+          `).join('')}
+        </div>
+        <p class="difficulty-text">Nehézség: ${q.nehezseg} (${q.pontszam} pont)</p>
+      `;
+    }
+
+    function checkAnswer(button, helyes, pontszam) {
+      const buttons = document.querySelectorAll('.answer');
+      buttons.forEach(b => b.disabled = true);
+
+      if (helyes) {
+        correctSound.play();
+        button.classList.add('correct');
+        score += pontszam;
+      } else {
+        wrongSound.play();
+        button.classList.add('wrong');
+        const correctButton = Array.from(buttons).find(b => b.outerHTML.includes("true"));
+        if (correctButton) correctButton.classList.add('correct');
+      }
+
+      document.getElementById('score').innerText = `Pontszám: ${score}`;
+      setTimeout(nextQuestion, 1200);
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < questions.length) showQuestion();
+      else endGame();
+    }
+
+    function endGame() {
+      const container = document.getElementById('game-container');
+      container.innerHTML = `
+        <h2>🎉 Vége a kvíznek!</h2>
+        <p>Elért pontszámod: <strong>${score}</strong> / ${questions.reduce((s,q)=>s+q.pontszam,0)}</p>
+        <button onclick="location.reload()">🔁 Vissza a menübe</button>
+      `;
+    }
+  </script>
+</body>
+</html>
